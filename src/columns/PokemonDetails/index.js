@@ -54,48 +54,4 @@ const Pokemon = props => {
   );
 };
 
-// class Pokemon extends React.Component {
-//   state = {
-//     pokemon: null
-//   };
-
-//   componentDidMount() {
-//     this.fetchPokemon();
-//   }
-
-//   componentDidUpdate(prevProps) {
-//     if (prevProps.name !== this.props.name) {
-//       this.fetchPokemon();
-//     }
-//   }
-
-//   fetchPokemon() {
-//     this.setState({
-//       pokemon: null
-//     });
-
-//     if (!this.props.name) return;
-//     fetchPokemonByName(this.props.name).then(pokemon => {
-//       this.setState({
-//         pokemon
-//       });
-//     });
-//   }
-
-//   render() {
-//     return (
-//       <Column width={1} p={4}>
-//         {!this.props.name ? null : !this.state.pokemon ? (
-//           <Spinner />
-//         ) : (
-//           <>
-//             <PokemonProfile pokemon={this.state.pokemon} />
-//             <PokemonGames pokemon={this.state.pokemon} />
-//           </>
-//         )}
-//       </Column>
-//     );
-//   }
-// }
-
 export default Pokemon;
