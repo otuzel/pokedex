@@ -7,7 +7,7 @@ import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 
-const PokemonList = props => {
+const usePokemons = () => {
   const [pokemons, setPokemons] = useState();
 
   useEffect(() => {
@@ -15,6 +15,11 @@ const PokemonList = props => {
       setPokemons(pokemons);
     });
   }, []);
+  return pokemons;
+};
+
+const PokemonList = props => {
+  const pokemons = usePokemons();
 
   return (
     <Sidebar>
