@@ -6,29 +6,19 @@ import Sidebar from "../../components/Sidebar";
 import SidebarItem from "../../components/SidebarItem";
 import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
-
-const usePokemons = () => {
-  const [pokemons, setPokemons] = useState();
-
-  useEffect(() => {
-    fetchPokemons().then(pokemons => {
-      setPokemons(pokemons);
-    });
-  }, []);
-  return pokemons;
-};
+import useAsync from "../../hooks/useAsync";
 
 const PokemonList = props => {
-  const pokemons = usePokemons();
+  const [pokemons, state] = useAsync(fetchPokemons, []);
 
   return (
     <Sidebar>
       <Link onClick={() => props.setSelectedPokemon(null)}>
         <SidebarTitle>Pokedex</SidebarTitle>
       </Link>
-      {!pokemons ? (
-        <Spinner />
-      ) : (
+      {state === "error" && <div>Oops</div>}
+      {state === "loading" && <Spinner />}
+      {state === "idle" && pokemons ? (
         pokemons.map(pokemon => (
           <Link
             key={pokemon.name}
@@ -37,6 +27,8 @@ const PokemonList = props => {
             <SidebarItem>{pokemon.name}</SidebarItem>
           </Link>
         ))
+      ) : (
+        <div>No pokemons</div>
       )}
     </Sidebar>
   );

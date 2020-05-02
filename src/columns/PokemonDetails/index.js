@@ -1,66 +1,53 @@
 // Renders the profile and games of a single pokemon
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React from "react";
 import { Spinner } from "@nice-boys/components";
 import PokemonProfile from "../../components/PokemonProfile";
 import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
-
-const usePokemon = name => {
-  const [pokemon, setPokemon] = useState(null);
-
-  const fetchPokemon = useCallback(() => {
-    setPokemon(null);
-    if (!name) return;
-    fetchPokemonByName(name).then(pokemon => {
-      setPokemon(pokemon);
-    });
-  }, [name]);
-
-  useEffect(() => {
-    fetchPokemon();
-  }, [fetchPokemon]);
-
-  return pokemon;
-};
-
-const usePokemonGames = pokemon => {
-  const [games, setGames] = useState(null);
-  const fetchGames = useCallback(() => {
-    setGames(null);
-    if (!pokemon) return;
-    fetchPokemonGames(pokemon.game_indices.map(game => game.version.name)).then(
-      games => {
-        setGames(games);
-      }
-    );
-  }, [pokemon]);
-
-  useState(() => {
-    fetchGames();
-  }, []);
-  return games;
-};
+import useAsync from "../../hooks/useAsync";
 
 const PokemonGames = props => {
-  const games = usePokemonGames(props.pokemon);
+  const [games, state] = useAsync(() => {
+    if (!props.pokemon) {
+      return Promise.resolve(null);
+    }
+    return fetchPokemonGames(
+      props.pokemon.game_indices.map(game => game.version.name)
+    );
+  }, [props.pokemon]);
 
-  return !games ? <Spinner /> : <PokemonGamesSection games={games} />;
+  return (
+    <>
+      {state === "error" && <div>Oops</div>}
+      {state === "loading" && <Spinner />}
+      {state === "idle" && games ? (
+        <PokemonGamesSection games={games} />
+      ) : (
+        <div>No games</div>
+      )}
+    </>
+  );
 };
 
 const Pokemon = props => {
-  const pokemon = usePokemon(props.name);
+  const [pokemon, state] = useAsync(() => {
+    return fetchPokemonByName(props.name);
+  }, [props.name]);
 
   return (
     <Column width={1} p={4}>
-      {!props.name ? null : !pokemon ? (
-        <Spinner />
-      ) : (
-        <>
-          <PokemonProfile pokemon={pokemon} />
-          <PokemonGames pokemon={pokemon} />
-        </>
-      )}
+      {state === "error" && <div>Oops</div>}
+      {state === "loading" && <Spinner />}
+      {state === "idle" &&
+        (!props.name ? null : pokemon ? (
+          <>
+            <PokemonProfile pokemon={pokemon} />
+            <PokemonGames pokemon={pokemon} />
+          </>
+        ) : (
+          <div>No pokemon</div>
+        ))}
     </Column>
   );
 };
