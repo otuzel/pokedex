@@ -1,5 +1,5 @@
 // Renders the profile and games of a single pokemon
-import React from "react";
+import React, { useCallback } from "react";
 import { Spinner } from "@nice-boys/components";
 import PokemonProfile from "../../components/PokemonProfile";
 import PokemonGamesSection from "../../components/PokemonGamesSection";
@@ -8,14 +8,15 @@ import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 import useAsync from "../../hooks/useAsync";
 
 const PokemonGames = props => {
-  const [games, state] = useAsync(() => {
-    if (!props.pokemon) {
-      return Promise.resolve(null);
-    }
-    return fetchPokemonGames(
-      props.pokemon.game_indices.map(game => game.version.name)
-    );
-  }, [props.pokemon]);
+  const callback = useCallback(
+    () =>
+      fetchPokemonGames(
+        props.pokemon.game_indices.map(game => game.version.name)
+      ),
+    [props.pokemon]
+  );
+
+  const [games, state] = useAsync(callback);
 
   return (
     <>
@@ -31,9 +32,11 @@ const PokemonGames = props => {
 };
 
 const Pokemon = props => {
-  const [pokemon, state] = useAsync(() => {
-    return fetchPokemonByName(props.name);
-  }, [props.name]);
+  const callback = useCallback(() => fetchPokemonByName(props.name), [
+    props.name
+  ]);
+
+  const [pokemon, state] = useAsync(callback);
 
   return (
     <Column width={1} p={4}>

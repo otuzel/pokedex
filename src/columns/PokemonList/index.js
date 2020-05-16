@@ -9,7 +9,7 @@ import { fetchPokemons } from "../../api/pokeapi";
 import useAsync from "../../hooks/useAsync";
 
 const PokemonList = props => {
-  const [pokemons, state] = useAsync(fetchPokemons, []);
+  const [pokemons, state] = useAsync(fetchPokemons);
 
   return (
     <Sidebar>

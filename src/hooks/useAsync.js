@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-const useAsync = (asyncFn, deps) => {
+const useAsync = asyncFn => {
   const [data, setData] = useState(null);
   const [state, setState] = useState("idle");
-
+  debugger;
   useEffect(() => {
     setState("loading");
     setData(null);
@@ -15,7 +15,7 @@ const useAsync = (asyncFn, deps) => {
         setState("error");
       });
     //eslint-disable-next-line
-  }, deps);
+  }, [asyncFn]);
 
   return [data, state];
 };
