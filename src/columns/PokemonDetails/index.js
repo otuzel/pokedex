@@ -16,14 +16,14 @@ const PokemonGames = props => {
     [props.pokemon]
   );
 
-  const [games, state] = useAsync(callback);
+  const { data, state } = useAsync(callback);
 
   return (
     <>
       {state === "error" && <div>Oops</div>}
       {state === "loading" && <Spinner />}
-      {state === "idle" && games ? (
-        <PokemonGamesSection games={games} />
+      {state === "idle" && data ? (
+        <PokemonGamesSection games={data} />
       ) : (
         <div>No games</div>
       )}
@@ -36,17 +36,17 @@ const Pokemon = props => {
     props.name
   ]);
 
-  const [pokemon, state] = useAsync(callback);
+  const { data, state } = useAsync(callback);
 
   return (
     <Column width={1} p={4}>
       {state === "error" && <div>Oops</div>}
       {state === "loading" && <Spinner />}
       {state === "idle" &&
-        (!props.name ? null : pokemon ? (
+        (!props.name ? null : data ? (
           <>
-            <PokemonProfile pokemon={pokemon} />
-            <PokemonGames pokemon={pokemon} />
+            <PokemonProfile pokemon={data} />
+            <PokemonGames pokemon={data} />
           </>
         ) : (
           <div>No pokemon</div>

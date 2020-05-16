@@ -9,7 +9,7 @@ import { fetchPokemons } from "../../api/pokeapi";
 import useAsync from "../../hooks/useAsync";
 
 const PokemonList = props => {
-  const [pokemons, state] = useAsync(fetchPokemons);
+  const { data, state } = useAsync(fetchPokemons);
 
   return (
     <Sidebar>
@@ -18,8 +18,8 @@ const PokemonList = props => {
       </Link>
       {state === "error" && <div>Oops</div>}
       {state === "loading" && <Spinner />}
-      {state === "idle" && pokemons ? (
-        pokemons.map(pokemon => (
+      {state === "idle" && data ? (
+        data.map(pokemon => (
           <Link
             key={pokemon.name}
             onClick={() => props.setSelectedPokemon(pokemon.name)}
