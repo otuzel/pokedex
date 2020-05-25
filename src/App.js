@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { BaseStyles } from "@primer/components";
 import { Flex } from "@primer/components";
+import { Spinner } from "@nice-boys/components";
+
 import PokemonList from "./columns/PokemonList";
-import PokemonDetails from "./columns/PokemonDetails";
+
+const PokemonDetails = React.lazy(() => import("./columns/PokemonDetails"));
 
 const App = () => {
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -16,7 +19,11 @@ const App = () => {
     <BaseStyles>
       <Flex>
         <PokemonList setSelectedPokemon={setSelectedPokemon} />
-        <PokemonDetails name={selectedPokemon} />
+        {selectedPokemon && (
+          <React.Suspense fallback={<Spinner />}>
+            <PokemonDetails name={selectedPokemon} />
+          </React.Suspense>
+        )}
       </Flex>
     </BaseStyles>
   );

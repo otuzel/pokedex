@@ -2,10 +2,13 @@
 import React, { useCallback } from "react";
 import { Spinner } from "@nice-boys/components";
 import PokemonProfile from "../../components/PokemonProfile";
-import PokemonGamesSection from "../../components/PokemonGamesSection";
 import Column from "../../components/Column";
 import { fetchPokemonGames, fetchPokemonByName } from "../../api/pokeapi";
 import useAsync from "../../hooks/useAsync";
+
+const PokemonGamesSection = React.lazy(() =>
+  import("../../components/PokemonGamesSection")
+);
 
 const PokemonGames = props => {
   const callback = useCallback(
@@ -23,7 +26,9 @@ const PokemonGames = props => {
       {state === "error" && <div>Oops</div>}
       {state === "loading" && <Spinner />}
       {state === "idle" && data ? (
-        <PokemonGamesSection games={data} />
+        <React.Suspense fallback={<Spinner />}>
+          <PokemonGamesSection games={data} />
+        </React.Suspense>
       ) : (
         <div>No games</div>
       )}
