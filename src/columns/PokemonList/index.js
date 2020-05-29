@@ -8,18 +8,31 @@ import SidebarTitle from "../../components/SidebarTitle";
 import { fetchPokemons } from "../../api/pokeapi";
 import useAsync from "../../hooks/useAsync";
 
+let pokemons = null;
+let error = null;
+
+const promise = fetchPokemons()
+  .then(data => {
+    pokemons = data;
+  })
+  .catch(err => {
+    error = err;
+  });
+
 const PokemonList = props => {
-  const { data, state } = useAsync(fetchPokemons);
+  if (error) {
+    throw error;
+  }
+  if (!pokemons) throw promise;
 
   return (
     <Sidebar>
       <Link onClick={() => props.setSelectedPokemon(null)}>
         <SidebarTitle>Pokedex</SidebarTitle>
       </Link>
-      {state === "error" && <div>Oops</div>}
-      {state === "loading" && <Spinner />}
-      {state === "idle" && data ? (
-        data.map(pokemon => (
+
+      {pokemons ? (
+        pokemons.map(pokemon => (
           <Link
             key={pokemon.name}
             onClick={() => props.setSelectedPokemon(pokemon.name)}
